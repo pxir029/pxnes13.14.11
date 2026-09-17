@@ -247,14 +247,14 @@ document.getElementById('resultModal').addEventListener('click',e=>{if(e.target.
 async function doAutoAI(){
   toast(lang==='fa'?'در حال ساخت پک هوش مصنوعی...':'Creating AI pack...');
   const count=Math.max(1,Math.min(40,Number(document.getElementById('aiCount')?.value)||25));
-  const r=await api('/api/links/auto-ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config_count:count})});
+  const r=await api('/api/links/auto-ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config_count:count,use_nodes:document.getElementById('aiUseNodes')?!!document.getElementById('aiUseNodes').checked:true})});
   if(r){showResult(r);refreshAll();toast(lang==='fa'?'پک AI با '+count+' کانفیگ ساخته شد':'AI pack ready')}
 }
 async function doAutoCreate(){
   toast(lang==='fa'?'در حال ساخت...':'Creating...');
   const count=Math.max(1,Math.min(40,Number(document.getElementById('aCount')?.value)||1));
   const protocol=document.getElementById('aProto')?.value||undefined;
-  let r=await api('/api/links/auto',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config_count:count,protocol})});
+  let r=await api('/api/links/auto',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config_count:count,protocol,use_nodes:!!document.getElementById('aUseNodes')?.checked})});
   if(!r){
     r=await api('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label:'auto-'+Date.now().toString(36).slice(-5),limit_value:0,limit_unit:'GB',config_count:count})});
   }
@@ -640,3 +640,53 @@ async function doLogout(e){
   location.href='/login';
   return false;
 }
+
+
+async function loadNodes(){
+  const box=document.getElementById('nodesList');
+  if(!box) return;
+  const r=await api('/api/nodes');
+  if(!r||!r.nodes){box.textContent='خطا در دریافت Nodeها';return}
+  if(!r.nodes.length){box.innerHTML='<div style="color:var(--t3)">هنوز Nodeی ثبت نشده. طبق آموزش بالا یک سرویس Railway دیگر بساز و دامنه را اینجا وارد کن.</div>';return}
+  box.innerHTML=r.nodes.map(n=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--card-b)">
+    <div>
+      <div style="font-weight:700;color:var(--t1)">${n.name||'Node'} · ${n.location||''}</div>
+      <div style="font-size:11px;direction:ltr;text-align:left;color:var(--t3)">${n.host}:${n.port||443} ${n.enabled===false?'(خاموش)':''}</div>
+    </div>
+    <button class="btn btn-sm btn-d" onclick="deleteNode('${n.id}')">حذف</button>
+  </div>`).join('');
+}
+async function createNode(){
+  const body={
+    name:document.getElementById('nodeName')?.value||'Node',
+    location:document.getElementById('nodeLoc')?.value||'Unknown',
+    host:document.getElementById('nodeHost')?.value||'',
+    port:Number(document.getElementById('nodePort')?.value)||443,
+    enabled:true
+  };
+  if(!body.host){toast('دامنه Node را وارد کن');return}
+  const r=await api('/api/nodes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r&&r.ok){toast('Node ثبت شد');loadNodes();['nodeName','nodeLoc','nodeHost'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''})}
+}
+async function deleteNode(id){
+  if(!confirm('حذف این Node؟'))return;
+  const r=await api('/api/nodes/'+id,{method:'DELETE'});
+  if(r&&r.ok){toast('حذف شد');loadNodes()}
+}
+const _goPage = typeof goPage==='function' ? goPage : null;
+
+document.addEventListener('click',function(e){
+  const t=e.target.closest && e.target.closest('[data-page="nodes"]');
+  if(t) setTimeout(loadNodes, 50);
+});
+
+window.addEventListener('load', function(){
+  try{
+    if(localStorage.getItem('px_domain_notice_v1')==='1') return;
+    var m=document.getElementById('domainNoticeModal');
+    if(!m) return;
+    m.style.display='flex';
+    var ok=document.getElementById('domainNoticeOk');
+    if(ok) ok.onclick=function(){ localStorage.setItem('px_domain_notice_v1','1'); m.style.display='none'; };
+  }catch(e){}
+});

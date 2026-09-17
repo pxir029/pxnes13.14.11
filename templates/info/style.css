@@ -32,10 +32,9 @@
       radial-gradient(ellipse 55% 35% at 60% 100%, var(--grad-3), transparent 40%),
       var(--bg-main);
   }
-  .status-dot{box-shadow:0 0 10px currentColor}
-  ::-webkit-scrollbar{width:8px;height:8px}
+  .status-dot{box-shadow:none;height:8px}
   ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}
-  * { box-shadow: none !important; }
+  * { box-shadow:none; }
   .copy-btn svg{transition:none}
   
   .dynamic-card {

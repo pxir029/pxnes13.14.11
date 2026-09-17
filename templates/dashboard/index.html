@@ -206,6 +206,11 @@
       <p style="color:var(--t2);font-size:13px;line-height:1.75;margin-bottom:14px" data-i18n="auto_desc">با یک کلیک کانفیگ بهینه ساخته می‌شود. بعد از ساخت لینک VLESS و ساب در اختیار شماست.</p>
       <div class="field"><label data-i18n="label_proto">پروتکـل</label><select id="aProto"></select></div>
       <div class="field"><label data-i18n="label_count">تعداد کانفیگ در سـاب (1-40)</label><input id="aCount" type="number" value="1" min="1" max="40"></div>
+      <div class="field" style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <input type="checkbox" id="aUseNodes" style="width:auto;margin:0">
+        <label for="aUseNodes" style="margin:0;cursor:pointer">استفاده از Nodeها (مولتی‌لوکیشن)</label>
+      </div>
+      <p style="font-size:11px;color:var(--t3);margin:-6px 0 12px;line-height:1.6">سرور اصلی پورت <b>8080</b> · هر Node پورت خودش (مثلاً 2053)</p>
       <button class="btn btn-p" style="width:100%;background:linear-gradient(135deg,#8b5cf6,#6366f1)" onclick="doAutoCreate()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2"/></svg>
         <span data-i18n="btn_auto">ساخـت خودکــار</span>
@@ -219,6 +224,10 @@
         — تعداد پیش‌فرض <b>۲۵</b> کانفیگ در ساب.
       </p>
       <div class="field"><label>تعداد در ساب (۱–۴۰)</label><input id="aiCount" type="number" value="25" min="1" max="40"></div>
+      <div class="field" style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <input type="checkbox" id="aiUseNodes" checked style="width:auto;margin:0">
+        <label for="aiUseNodes" style="margin:0;cursor:pointer">استفاده از Nodeها (مولتی‌لوکیشن)</label>
+      </div>
       <button class="btn btn-p" style="width:100%;background:linear-gradient(135deg,#10b981,#059669)" onclick="doAutoAI()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg>
         <span>ساخت پک هوش مصنوعی</span>
@@ -490,6 +499,38 @@
 
 <script src="/static/dashboard/js/app.js"></script>
 
+
+<section class="page" id="page-nodes">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Nodeها · چند لوکیشن</div>
+      <div class="page-sub">هر Node یک سرویس Railway (یا دامنه) جداست. بعد از اتصال، کانفیگ‌های ساب چندلوکیشنه می‌شوند.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">افزودن Node</div>
+    <div class="field"><label>نام</label><input id="nodeName" placeholder="مثلاً NL-1"></div>
+    <div class="field"><label>لوکیشن / کشور</label><input id="nodeLoc" placeholder="Netherlands / Germany / ..."></div>
+    <div class="field"><label>دامنه Railway Node</label><input id="nodeHost" placeholder="my-node.up.railway.app" dir="ltr" style="text-align:left"></div>
+    <div class="field"><label>پورت Node (هر عددی، مثلاً 2053)</label><input id="nodePort" type="number" value="2053" min="1" max="65535" dir="ltr" style="text-align:left"></div>
+    <button class="btn btn-p" onclick="createNode()">ثبت Node</button>
+  </div>
+  <div class="card">
+    <div class="card-title">لیست Nodeها</div>
+    <div id="nodesList" style="font-size:13px;color:var(--t2)">در حال بارگذاری...</div>
+  </div>
+  <div class="card">
+    <div class="card-title">آموزش سریع Railway</div>
+    <ol style="margin:0;padding-right:18px;line-height:1.9;font-size:13px;color:var(--t2)">
+      <li>یک سرویس جدید از همین ریپو روی Railway بساز (Deploy از GitHub).</li>
+      <li>دامنه Public همان سرویس را کپی کن (مثلاً <code style="color:var(--accent2)">xxx.up.railway.app</code>).</li>
+      <li>اینجا به‌عنوان Node با لوکیشن دلخواه ثبت کن.</li>
+      <li>Volume روی <code>/data</code> برای هر سرویس جدا لازم است.</li>
+      <li>بعد از ثبت، در ساب کانفیگ‌ها با نام لوکیشن ظاهر می‌شوند.</li>
+    </ol>
+  </div>
+</section>
+
 <!-- Domain notice modal (once per browser) -->
 <div id="domainNoticeModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);align-items:center;justify-content:center;padding:20px">
   <div style="width:100%;max-width:440px;background:#12121a;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:24px;box-shadow:0 25px 50px rgba(0,0,0,.5);font-family:Vazirmatn,Tahoma,sans-serif;color:#f1f5f9;direction:rtl">
@@ -515,18 +556,22 @@ async function doLogout(e){
   location.href='/login';
   return false;
 }
-(function(){
+function showDomainNotice(){
   try{
     if(localStorage.getItem('px_domain_notice_v1')==='1') return;
     var m=document.getElementById('domainNoticeModal');
     if(!m) return;
     m.style.display='flex';
-    document.getElementById('domainNoticeOk').onclick=function(){
+    var ok=document.getElementById('domainNoticeOk');
+    if(ok) ok.onclick=function(){
       localStorage.setItem('px_domain_notice_v1','1');
       m.style.display='none';
     };
   }catch(_){}
-})();
+}
+if(document.readyState==='complete'){ showDomainNotice(); }
+else{ window.addEventListener('load', showDomainNotice); }
+
 </script>
 
 </body>

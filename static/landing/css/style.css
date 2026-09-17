@@ -48,8 +48,7 @@ body{
 
     backdrop-filter:blur(28px) saturate(150%);
 
-    box-shadow:
-        0 30px 90px rgba(0,0,0,.45);
+    box-shadow:none;
 }
 
 .brand{
