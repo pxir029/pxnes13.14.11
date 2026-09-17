@@ -39,7 +39,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # ============================================================
 
 APP_NAME = "PXPanel"
-APP_VERSION = "13.12.4"
+APP_VERSION = "13.12.5"
 
 SUPPORT_USERNAME = "@logic_sec"
 SUPPORT_URL = "https://t.me/logic_sec"

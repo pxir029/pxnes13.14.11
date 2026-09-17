@@ -344,6 +344,7 @@ goPage=function(name){
   if(name==='admins') loadAdmins();
   if(name==='groups') loadGroups();
   if(name==='settings') loadSecurity();
+  if(name==='nodes') loadNodes();
 };
 
 const PERM_LABELS={
@@ -673,12 +674,6 @@ async function deleteNode(id){
   const r=await api('/api/nodes/'+id,{method:'DELETE'});
   if(r&&r.ok){toast('حذف شد');loadNodes()}
 }
-const _goPage = typeof goPage==='function' ? goPage : null;
-
-document.addEventListener('click',function(e){
-  const t=e.target.closest && e.target.closest('[data-page="nodes"]');
-  if(t) setTimeout(loadNodes, 50);
-});
 
 window.addEventListener('load', function(){
   try{
