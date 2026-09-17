@@ -39,7 +39,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # ============================================================
 
 APP_NAME = "PXPanel"
-APP_VERSION = "13.12.0"
+APP_VERSION = "13.12.2"
 
 SUPPORT_USERNAME = "@logic_sec"
 SUPPORT_URL = "https://t.me/logic_sec"
@@ -250,7 +250,6 @@ PROTOCOLS = (
     "xhttp-packet-up",
     "xhttp-stream-up",
     "xhttp-stream-one",
-    "ai-turbo",
     "vmess-ws",
     "trojan-ws",
     "shadowsocks",
@@ -266,7 +265,6 @@ PROTOCOL_LABELS = {
     "xhttp-packet-up": "XHTTP Packet Up ⚡",
     "xhttp-stream-up": "XHTTP Stream Up ⚡",
     "xhttp-stream-one": "XHTTP Stream One ⚡",
-    "ai-turbo": "AI Turbo 🚀 (Gemini / ChatGPT / Claude)",
     "vmess-ws": "VMess WebSocket",
     "trojan-ws": "Trojan WebSocket",
     "shadowsocks": "Shadowsocks",
@@ -279,7 +277,7 @@ PROTOCOL_LABELS = {
 
 PROTOCOL_ALIASES = {
     "vmess": "vmess-ws", "trojan": "trojan-ws", "ss": "shadowsocks",
-    "socks": "socks5", "ai": "ai-turbo", "gemini": "ai-turbo", "chatgpt": "ai-turbo",
+    "socks": "socks5",
 }
 
 DEFAULT_PROTOCOL = "vless-ws"
@@ -722,18 +720,26 @@ def get_host(
 # PASSWORD
 # ============================================================
 
-def hash_password(
-    password: str,
-) -> str:
+def hash_password(password: str) -> str:
+    """Stable password hash (does NOT depend on SECRET_KEY so Railway restarts don't break login)."""
+    payload = ("pxpanel-v2:" + str(password or "")).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
 
-    payload = (
-        password
-        + SECRET_KEY
-    ).encode("utf-8")
 
-    return hashlib.sha256(
-        payload
-    ).hexdigest()
+def hash_password_legacy(password: str) -> str:
+    """Old format: sha256(password + SECRET_KEY) — still accepted for migration."""
+    payload = (str(password or "") + SECRET_KEY).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def verify_password(password: str, stored_hash: str | None) -> bool:
+    if not password or not stored_hash:
+        return False
+    if hash_password(password) == stored_hash:
+        return True
+    if hash_password_legacy(password) == stored_hash:
+        return True
+    return False
 
 
 # No default password — first-run setup required unless ADMIN_PASSWORD env is set
@@ -1052,21 +1058,6 @@ def generate_vless_link(
     if protocol == "hysteria2": return f"hysteria2://{uuid}@{host}:{port_value}/?sni={quote(host)}&insecure=0#{label}"
     if protocol == "tuic": return f"tuic://{uuid}:{uuid}@{host}:{port_value}?sni={quote(host)}&alpn=h3#{label}"
     if protocol == "wireguard": return f"wireguard://{uuid}@{host}:{port_value}?publicKey={uuid}#{label}"
-    if protocol == "ai-turbo":
-        # High-throughput path optimized for AI sites (Gemini, ChatGPT, Claude, ...)
-        # Uses XHTTP stream-one + h2 + chrome fingerprint (same relay core as xhttp)
-        q = {
-            "encryption": "none",
-            "security": "tls",
-            "type": "xhttp",
-            "mode": "stream-one",
-            "host": host,
-            "path": f"/xhttp-siz10/stream-one/{uuid}",
-            "sni": host,
-            "fp": (fp or "chrome"),
-            "alpn": "h2",
-        }
-        return "vless://" + uuid + "@" + host + ":" + str(port_value) + "?" + "&".join(f"{k}={quote(str(v), safe=',/')}" for k,v in q.items()) + "#" + label
     if protocol == "highspeed-demo":
         q = {"encryption":"none","security":"tls","type":"xhttp","mode":"stream-up","host":host,"path":f"/xhttp-siz10/stream-up/{uuid}","sni":host,"fp":fp,"alpn":"h2,http/1.1"}
         return "vless://" + uuid + "@" + host + ":" + str(port_value) + "?" + "&".join(f"{k}={quote(str(v), safe=',/')}" for k,v in q.items()) + "#" + label
@@ -2210,10 +2201,14 @@ async def login_form(
             status_code=400,
         )
 
-    if (
-        hash_password(password)
-        != AUTH["password_hash"]
-    ):
+    _ok_form = verify_password(password, AUTH.get("password_hash"))
+    if not _ok_form:
+        _env = os.environ.get("ADMIN_PASSWORD", "").strip()
+        if _env and password == _env:
+            AUTH["password_hash"] = hash_password(password)
+            AUTH["password_configured"] = True
+            _ok_form = True
+    if not _ok_form:
 
         locked, value = register_login_failure(ip)
         if locked:
@@ -2288,16 +2283,31 @@ async def api_login(request: Request):
         raise HTTPException(status_code=400, detail="رمز عبور الزامی است")
     meta = {"role": "owner", "admin_id": None, "username": "owner"}
     ok = False
-    if username and username not in ("owner", "admin", "root"):
+    # 1) Owner password (empty username or owner/admin/root)
+    if not username or username in ("owner", "admin", "root", ""):
+        if verify_password(password, AUTH.get("password_hash")):
+            ok = True
+            # Upgrade legacy hash to stable format
+            if AUTH.get("password_hash") != hash_password(password):
+                AUTH["password_hash"] = hash_password(password)
+                AUTH["password_configured"] = True
+        # Env override: ADMIN_PASSWORD always works and resets stored hash
+        env_pw = os.environ.get("ADMIN_PASSWORD", "").strip()
+        if not ok and env_pw and password == env_pw:
+            ok = True
+            AUTH["password_hash"] = hash_password(password)
+            AUTH["password_configured"] = True
+    # 2) Named sub-admin
+    if not ok and username:
         aid, admin = find_admin_by_username(username)
-        if admin and admin.get("password_hash") == hash_password(password):
+        if admin and verify_password(password, admin.get("password_hash")):
             if not admin_is_valid(admin):
                 raise HTTPException(status_code=403, detail="حساب مسدود یا منقضی شده است")
             ok = True
             meta = {"role": "admin", "admin_id": aid, "username": username}
-    else:
-        if hash_password(password) == AUTH["password_hash"]:
-            ok = True
+            # upgrade admin hash if legacy
+            if admin.get("password_hash") != hash_password(password):
+                admin["password_hash"] = hash_password(password)
     if not ok:
         locked, value = register_login_failure(ip)
         if locked:
@@ -2382,10 +2392,7 @@ async def api_change_password(
         )
     )
 
-    if (
-        hash_password(current_password)
-        != AUTH["password_hash"]
-    ):
+    if not verify_password(current_password, AUTH.get("password_hash")):
         raise HTTPException(
             status_code=400,
             detail="رمز فعلی اشتباه است",
@@ -2745,8 +2752,7 @@ async def create_auto_ai_link(
         "xhttp-packet-up",
         "xhttp-stream-up",
         "xhttp-stream-one",
-        "ai-turbo",
-    ]
+        ]
     uid, link = await make_link(
         label="AI-" + auto_config_name(),
         limit_bytes=0,
@@ -2770,7 +2776,7 @@ async def create_auto_ai_link(
     result = {
         **get_link_info(link, uid, host),
         "ok": True,
-        "profile": "ai-turbo",
+        "profile": "ai-pack",
         "sub_protocols": sub_protocols,
         "config_count": config_count,
     }
@@ -3509,7 +3515,7 @@ async def subscription_single(
         time_text = "∞"
     label = str(link.get("label") or "Config")
     is_ai_pack = (
-        str(link.get("security_profile") or "") == "ai-turbo"
+        str(link.get("security_profile") or "") in ("ai-turbo", "ai-pack")
         or bool(link.get("sub_protocols"))
         or str(label).upper().startswith("AI-")
     )
@@ -3569,8 +3575,7 @@ async def subscription_single(
         "xhttp-packet-up": "XHTTP-PU",
         "xhttp-stream-up": "XHTTP-SU",
         "xhttp-stream-one": "XHTTP-SO",
-        "ai-turbo": "AI-Turbo",
-    }
+            }
 
     def _proto_for_index(i: int) -> str:
         if sub_protocols:
@@ -3578,12 +3583,12 @@ async def subscription_single(
         return link.get("protocol", DEFAULT_PROTOCOL)
 
     def _fp_for_proto(proto: str) -> str:
-        if proto in ("ai-turbo", "xhttp-stream-one", "xhttp-stream-up", "xhttp-packet-up"):
+        if proto in ("xhttp-stream-one", "xhttp-stream-up", "xhttp-packet-up"):
             return "chrome"
         return link.get("fingerprint", DEFAULT_FINGERPRINT) or DEFAULT_FINGERPRINT
 
     def _alpn_for_proto(proto: str) -> str:
-        if proto in ("ai-turbo", "xhttp-stream-one", "xhttp-stream-up"):
+        if proto in ("xhttp-stream-one", "xhttp-stream-up"):
             return "h2"
         if proto == "xhttp-packet-up":
             return "h2,http/1.1"
