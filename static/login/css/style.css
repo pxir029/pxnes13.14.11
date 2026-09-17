@@ -1,0 +1,32 @@
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  font-family:Vazirmatn,Tahoma,sans-serif;color:#f1f5f9;
+  background:radial-gradient(1200px 600px at 50% -10%,#1e293b 0%,#0a0a0f 55%);
+}
+.card{
+  width:100%;max-width:400px;padding:28px 24px;border-radius:20px;
+  background:rgba(18,18,26,.92);border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 25px 50px -12px rgba(0,0,0,.55);backdrop-filter:blur(12px);
+}
+h1{font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:1.25rem;letter-spacing:-.02em}
+label{display:block;font-size:12px;color:rgba(255,255,255,.55);margin-bottom:6px;font-weight:600}
+input{
+  width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);
+  background:rgba(0,0,0,.35);color:#fff;font-family:inherit;font-size:14px;outline:none;margin-bottom:14px;
+  direction:ltr;text-align:left;
+}
+input:focus{border-color:rgba(59,130,246,.55);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+button{
+  width:100%;padding:13px;border:none;border-radius:12px;
+  background:#2563eb;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:.15s;
+}
+button:hover{background:#1d4ed8}
+button:disabled{opacity:.5;cursor:not-allowed}
+.err{display:none;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.28);color:#fca5a5;padding:10px 12px;border-radius:10px;font-size:12px;margin-bottom:12px}
+.err.show{display:block}
+.warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.85;color:#fbbf24;margin-bottom:16px}
+.warn code{background:rgba(0,0,0,.35);padding:2px 7px;border-radius:6px;font-family:ui-monospace,monospace;color:#93c5fd}
+.hidden{display:none!important}
+.brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px}
+.brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}

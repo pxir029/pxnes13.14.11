@@ -1,0 +1,52 @@
+
+  :root {{
+    --bg-main: #05060a;
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --bg-card-hover: rgba(255, 255, 255, 0.07);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-main: #f1f5f9;
+    --text-muted: rgba(255, 255, 255, 0.4);
+    --bg-sub-card: rgba(0, 0, 0, 0.2);
+    --grad-1: rgba(96,165,250,.16);
+    --grad-2: rgba(96,165,250,.13);
+    --grad-3: rgba(52,211,153,.08);
+  }}
+
+  body.theme-lighter {{
+    --bg-main: #131722;
+    --bg-card: rgba(255, 255, 255, 0.075);
+    --bg-card-hover: rgba(255, 255, 255, 0.115);
+    --border-color: rgba(255, 255, 255, 0.16);
+    --text-main: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --bg-sub-card: rgba(0, 0, 0, 0.35);
+    --grad-1: rgba(96,165,250,.24);
+    --grad-2: rgba(96,165,250,.20);
+    --grad-3: rgba(52,211,153,.13);
+  }}
+
+  html,body{{background:var(--bg-main); transition: background 0.3s ease, color 0.3s ease;}}
+  body{{
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, var(--grad-1), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 95% 15%, var(--grad-2), transparent 45%),
+      radial-gradient(ellipse 55% 35% at 60% 100%, var(--grad-3), transparent 40%),
+      var(--bg-main);
+  }}
+  .status-dot{{box-shadow:0 0 10px currentColor}}
+  ::-webkit-scrollbar{{width:8px;height:8px}}
+  ::-webkit-scrollbar-thumb{{background:rgba(255,255,255,.12);border-radius:99px}}
+  * {{ box-shadow: none !important; }}
+  .copy-btn svg{{transition:none}}
+  
+  .dynamic-card {{
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }}
+  .dynamic-card:hover {{
+    background-color: var(--bg-card-hover);
+  }}
+  .sub-box {{
+    background-color: var(--bg-sub-card);
+  }}
