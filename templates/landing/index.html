@@ -1,107 +1,68 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>PX Panel</title>
-
+<title>PXPanel {{APP_VERSION}}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link
-href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap"
-rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/landing/css/style.css">
+<style>
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+    font-family:Vazirmatn,Tahoma,sans-serif;color:#e2e8f0;
+    background:radial-gradient(900px 500px at 50% -20%,#1e3a5f 0%,#0a0a0f 55%)}
+  .card{width:100%;max-width:420px;padding:32px 28px;border-radius:22px;
+    background:rgba(15,15,22,.94);border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 30px 60px rgba(0,0,0,.45)}
+  .brand{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+    font-weight:900;font-size:18px;color:#fff;
+    background:linear-gradient(135deg,#3b82f6,#8b5cf6)}
+  .brand-name{font-size:18px;font-weight:800;letter-spacing:-.02em}
+  .version{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
+  .status{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+    color:#34d399;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);
+    padding:6px 12px;border-radius:999px;margin-bottom:18px}
+  .status i{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 8px #34d399}
+  h1{font-size:1.35rem;font-weight:800;line-height:1.55;margin-bottom:10px}
+  .desc{font-size:13px;line-height:1.85;color:rgba(255,255,255,.55);margin-bottom:20px}
+  .path{font-family:ui-monospace,monospace;font-size:12px;color:#93c5fd;
+    background:rgba(0,0,0,.35);padding:10px 12px;border-radius:10px;margin-bottom:18px;direction:ltr;text-align:left}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{flex:1;min-width:120px;text-align:center;padding:12px 14px;border-radius:12px;
+    font-weight:700;font-size:13px;text-decoration:none;transition:.15s}
+  .btn.primary{background:#2563eb;color:#fff}
+  .btn.primary:hover{background:#1d4ed8}
+  .btn.secondary{background:rgba(255,255,255,.06);color:#e2e8f0;border:1px solid rgba(255,255,255,.1)}
+  .footer{margin-top:22px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06);
+    display:flex;justify-content:space-between;align-items:center;font-size:11px;color:rgba(255,255,255,.4)}
+  .footer a{color:#60a5fa;text-decoration:none}
+</style>
 </head>
-
 <body>
-
 <div class="card">
-
-<div class="brand">
-
-<div class="logo">P</div>
-
-<div>
-<div class="brand-name">
-PX Panel
-</div>
-
-<div class="version">
-13.8.0
-</div>
-</div>
-
-</div>
-
-<div class="status">
-● سیستم آنلاین و فعال است
-</div>
-
-<h1>
-برای ورود به پنل
-<br>
-ابتدا وارد شوید
-</h1>
-
-<div class="desc">
-این صفحه، درگاه عمومی PX Panel است.
-برای دسترسی به داشبورد مدیریت از مسیر ورود استفاده کنید.
-</div>
-
-<div class="path">
-/login
-</div>
-
-<div class="actions">
-
-<a
-href="/login"
-class="btn primary"
->
-ورود به پنل
-</a>
-
-<a
-href="https://t.me/Pixonal"
-target="_blank"
-rel="noopener"
-class="btn secondary"
->
-پشتیبانی
-</a>
-
-</div>
-
-<div class="footer">
-
-<span>
-PX Panel · 13.8.0
-</span>
-
-<a
-href="https://t.me/Pixonal"
-target="_blank"
-class="support"
->
-@Pixonal
-</a>
-
-</div>
-
-</div>
-
-
-<div id="bottomBulkBar" class="bottom-bulk">
-  <div class="bottom-bulk-inner">
-    <span id="bulkCount">0 انتخاب</span>
-    <select id="bulkGroup"></select>
-    <button class="btn btn-sm" onclick="bulkMoveGroup()">انتقال به گروه</button>
-    <button class="btn btn-sm btn-d" onclick="bulkDelete()">حذف انتخاب‌شده</button>
-    <button class="btn btn-sm" onclick="clearSelection()">لغو</button>
+  <div class="brand">
+    <div class="logo">PX</div>
+    <div>
+      <div class="brand-name">PXPanel</div>
+      <div class="version">Professional Gateway · v{{APP_VERSION}}</div>
+    </div>
+  </div>
+  <div class="status"><i></i> سیستم آنلاین و آماده</div>
+  <h1>ورود به پنل مدیریت</h1>
+  <div class="desc">
+    دروازه امن برای مدیریت کانفیگ‌ها، سابسکریپشن و ربات تلگرام.
+    برای دسترسی به داشبورد از مسیر ورود استفاده کنید.
+  </div>
+  <div class="path">/login</div>
+  <div class="actions">
+    <a href="/login" class="btn primary">ورود به پنل</a>
+    <a href="https://t.me/logic_sec" target="_blank" rel="noopener" class="btn secondary">پشتیبانی</a>
+  </div>
+  <div class="footer">
+    <span>PXPanel v{{APP_VERSION}}</span>
+    <a href="https://t.me/logic_sec" target="_blank" rel="noopener">@logic_sec</a>
   </div>
 </div>
 </body>

@@ -1,32 +1,78 @@
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
 body{
-  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-  font-family:Vazirmatn,Tahoma,sans-serif;color:#f1f5f9;
-  background:radial-gradient(1200px 600px at 50% -10%,#1e293b 0%,#0a0a0f 55%);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  font-family:Vazirmatn,Tahoma,sans-serif;
+  color:#f1f5f9;
+  background:#0a0a0f;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37,99,235,.22), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(139,92,246,.08), transparent 45%);
 }
 .card{
-  width:100%;max-width:400px;padding:28px 24px;border-radius:20px;
-  background:rgba(18,18,26,.92);border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 25px 50px -12px rgba(0,0,0,.55);backdrop-filter:blur(12px);
+  width:100%;
+  max-width:380px;
+  padding:28px 24px;
+  border-radius:18px;
+  background:#12121a;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 20px 40px rgba(0,0,0,.35);
 }
-h1{font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:1.25rem;letter-spacing:-.02em}
-label{display:block;font-size:12px;color:rgba(255,255,255,.55);margin-bottom:6px;font-weight:600}
+.brand{display:flex;justify-content:center;margin-bottom:10px}
+.brand-icon{
+  width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:14px;color:#fff;
+  background:linear-gradient(135deg,#3b82f6,#6366f1);
+}
+h1{
+  font-size:20px;font-weight:800;text-align:center;
+  margin-bottom:4px;letter-spacing:-.02em;
+}
+.ver{
+  text-align:center;font-size:11px;color:rgba(255,255,255,.4);
+  margin-bottom:20px;
+}
+label{
+  display:block;font-size:12px;color:rgba(255,255,255,.5);
+  margin-bottom:6px;font-weight:600;
+}
 input{
-  width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);
-  background:rgba(0,0,0,.35);color:#fff;font-family:inherit;font-size:14px;outline:none;margin-bottom:14px;
-  direction:ltr;text-align:left;
+  width:100%;padding:12px 14px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(0,0,0,.35);color:#fff;
+  font-family:inherit;font-size:14px;outline:none;
+  margin-bottom:14px;direction:ltr;text-align:left;
 }
-input:focus{border-color:rgba(59,130,246,.55);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+input:focus{border-color:rgba(59,130,246,.55)}
+input::placeholder{color:rgba(255,255,255,.28)}
 button{
   width:100%;padding:13px;border:none;border-radius:12px;
-  background:#2563eb;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:.15s;
+  background:#2563eb;color:#fff;font-family:inherit;
+  font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;
 }
 button:hover{background:#1d4ed8}
 button:disabled{opacity:.5;cursor:not-allowed}
-.err{display:none;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.28);color:#fca5a5;padding:10px 12px;border-radius:10px;font-size:12px;margin-bottom:12px}
+.err{
+  display:none;
+  background:rgba(239,68,68,.12);
+  border:1px solid rgba(239,68,68,.28);
+  color:#fca5a5;padding:10px 12px;border-radius:10px;
+  font-size:12px;margin-bottom:12px;line-height:1.6;
+}
 .err.show{display:block}
-.warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.85;color:#fbbf24;margin-bottom:16px}
-.warn code{background:rgba(0,0,0,.35);padding:2px 7px;border-radius:6px;font-family:ui-monospace,monospace;color:#93c5fd}
+.warn{
+  background:rgba(245,158,11,.1);
+  border:1px solid rgba(245,158,11,.28);
+  border-radius:12px;padding:12px;font-size:12px;
+  line-height:1.85;color:#fbbf24;margin-bottom:16px;
+}
+.warn code{
+  background:rgba(0,0,0,.35);padding:2px 6px;border-radius:6px;
+  font-family:ui-monospace,monospace;color:#93c5fd;
+}
 .hidden{display:none!important}
-.brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px}
-.brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}

@@ -3,111 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>پی ایکس پنل</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>PXPanel {{APP_VERSION}}</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/page-assets/login/style.css">
-<style>
-  /* Critical fallback styles if /static fails */
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-    font-family:Vazirmatn,Tahoma,sans-serif;color:#f1f5f9;
-    background:radial-gradient(1200px 600px at 50% -10%,#1e293b 0%,#0a0a0f 55%)}
-  .card{width:100%;max-width:400px;padding:28px 24px;border-radius:20px;
-    background:rgba(18,18,26,.92);border:1px solid rgba(255,255,255,.08);
-    box-shadow:0 25px 50px -12px rgba(0,0,0,.55);backdrop-filter:blur(12px)}
-  h1{font-size:1.25rem;font-weight:800;text-align:center;margin-bottom:1.25rem;letter-spacing:-.02em}
-  label{display:block;font-size:12px;color:rgba(255,255,255,.55);margin-bottom:6px;font-weight:600}
-  input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);
-    background:rgba(0,0,0,.35);color:#fff;font-family:inherit;font-size:14px;outline:none;margin-bottom:14px;
-    direction:ltr;text-align:left}
-  input:focus{border-color:rgba(59,130,246,.55);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
-  button{width:100%;padding:13px;border:none;border-radius:12px;background:#2563eb;color:#fff;
-    font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:.15s}
-  button:hover{background:#1d4ed8}
-  button:disabled{opacity:.5;cursor:not-allowed}
-  .err{display:none;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.28);color:#fca5a5;
-    padding:10px 12px;border-radius:10px;font-size:12px;margin-bottom:12px}
-  .err.show{display:block}
-  .warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);border-radius:12px;
-    padding:12px 14px;font-size:12px;line-height:1.85;color:#fbbf24;margin-bottom:16px}
-  .warn code{background:rgba(0,0,0,.35);padding:2px 7px;border-radius:6px;font-family:ui-monospace,monospace;color:#93c5fd}
-  .hidden{display:none!important}
-  .brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px}
-  .brand-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);
-    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
-</style>
 </head>
 <body>
-<div class="card">
-  <div class="brand">
-    <div class="brand-icon">PX</div>
-  </div>
-  <h1>پی ایکس پنل</h1>
-
-  <div id="setupBox" class="hidden">
-    <div class="warn">
-      برای نگه‌داشتن داده‌ها روی Railway حتماً Volume با مسیر <code>/data</code> وصل کنید.
+  <div class="card">
+    <div class="brand">
+      <div class="brand-icon">PX</div>
     </div>
-    <div class="err" id="setupErr"></div>
-    <label>رمز عبور پنل</label>
-    <input type="password" id="setupPw" placeholder="حداقل ۶ کاراکتر" autocomplete="new-password">
-    <label>تکرار رمز عبور</label>
-    <input type="password" id="setupPw2" placeholder="تکرار رمز" autocomplete="new-password">
-    <button type="button" id="setupBtn" onclick="doSetup()">تنظیم رمز و ورود</button>
-  </div>
+    <h1>پی ایکس پنل</h1>
+    <p class="ver">v{{APP_VERSION}}</p>
 
-  <div id="loginBox" class="hidden">
-    <div class="err" id="loginErr"></div>
-    <form id="loginForm">
-      <label>نام کاربری ادمین</label>
-      <input type="text" id="loginUser" placeholder="خالی = مالک پنل" autocomplete="username">
-      <label>رمز عبور</label>
-      <input type="password" id="loginPw" placeholder="رمز عبور" autocomplete="current-password" required>
-      <button type="submit" id="loginBtn">ورود</button>
-    </form>
+    <div id="setupBox" class="hidden">
+      <div class="warn">
+        برای نگه‌داشتن داده‌ها روی Railway حتماً Volume با مسیر <code>/data</code> وصل کنید.
+      </div>
+      <div class="err" id="setupErr"></div>
+      <label for="setupPw">رمز عبور پنل</label>
+      <input type="password" id="setupPw" placeholder="حداقل ۶ کاراکتر" autocomplete="new-password">
+      <label for="setupPw2">تکرار رمز عبور</label>
+      <input type="password" id="setupPw2" placeholder="تکرار رمز" autocomplete="new-password">
+      <button type="button" id="setupBtn">تنظیم رمز و ورود</button>
+    </div>
+
+    <div id="loginBox" class="hidden">
+      <div class="err" id="loginErr"></div>
+      <form id="loginForm" autocomplete="on">
+        <label for="loginUser">نام کاربری ادمین</label>
+        <input type="text" id="loginUser" placeholder="خالی = مالک پنل" autocomplete="username">
+        <label for="loginPw">رمز عبور</label>
+        <input type="password" id="loginPw" placeholder="رمز عبور" autocomplete="current-password" required>
+        <button type="submit" id="loginBtn">ورود</button>
+      </form>
+    </div>
   </div>
-</div>
-<script src="/page-assets/login/app.js"></script>
-<script>
-/* inline fallback if static js fails to load */
-if(typeof checkSetup!=='function'){
-  async function checkSetup(){
-    try{
-      const r=await fetch('/api/setup/status');
-      const d=await r.json();
-      if(d.needs_setup){document.getElementById('setupBox').classList.remove('hidden')}
-      else{document.getElementById('loginBox').classList.remove('hidden');document.getElementById('loginPw')?.focus()}
-    }catch(e){document.getElementById('loginBox').classList.remove('hidden')}
-  }
-  async function doSetup(){
-    const pw=document.getElementById('setupPw').value,pw2=document.getElementById('setupPw2').value;
-    const err=document.getElementById('setupErr');err.classList.remove('show');
-    if(pw.length<6){err.textContent='رمز حداقل ۶ کاراکتر';err.classList.add('show');return}
-    if(pw!==pw2){err.textContent='تکرار رمز یکسان نیست';err.classList.add('show');return}
-    const btn=document.getElementById('setupBtn');btn.disabled=true;
-    try{
-      const r=await fetch('/api/setup/password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,repeat_password:pw2})});
-      const d=await r.json().catch(()=>({}));
-      if(!r.ok) throw new Error(d.detail||'خطا');
-      location.href='/dashboard';
-    }catch(e){err.textContent=e.message||'خطا';err.classList.add('show');btn.disabled=false}
-  }
-  document.getElementById('loginForm')?.addEventListener('submit',async e=>{
-    e.preventDefault();
-    const err=document.getElementById('loginErr');err.classList.remove('show');
-    const btn=document.getElementById('loginBtn');btn.disabled=true;
-    try{
-      const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-        password:document.getElementById('loginPw').value,
-        username:document.getElementById('loginUser').value
-      })});
-      if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.detail||'رمز اشتباه است')}
-      location.href='/dashboard';
-    }catch(e){err.textContent=e.message;err.classList.add('show');btn.disabled=false}
-  });
-  checkSetup();
-}
-</script>
+  <script src="/page-assets/login/app.js"></script>
 </body>
 </html>

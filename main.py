@@ -1,5 +1,5 @@
 # ============================================================
-# PXPanel 13.11.3
+# PXPanel 13.12.0 — Professional Release
 # Railway Ready
 # Created By PIXON
 # ============================================================
@@ -39,7 +39,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # ============================================================
 
 APP_NAME = "PXPanel"
-APP_VERSION = "13.11.4"
+APP_VERSION = "13.12.0"
 
 SUPPORT_USERNAME = "@logic_sec"
 SUPPORT_URL = "https://t.me/logic_sec"
@@ -130,7 +130,11 @@ app.mount("/page-assets", StaticFiles(directory=str(TEMPLATES_DIR)), name="page_
 
 def load_template(page: str, name: str = "index.html") -> str:
     path = TEMPLATES_DIR / page / name
-    return path.read_text(encoding="utf-8")
+    html = path.read_text(encoding="utf-8")
+    # Global version injection for all pages
+    html = html.replace("{{APP_VERSION}}", APP_VERSION)
+    html = html.replace("__APP_VERSION__", APP_VERSION)
+    return html
 
 
 def render_info_template(**kwargs) -> str:
@@ -2021,7 +2025,7 @@ async def root(
         )
 
     return HTMLResponse(
-        LANDING_HTML
+        load_template("landing")
     )
 
 
@@ -2053,21 +2057,13 @@ LOGIN_HTML = load_template("login")
 def login_error_html(
     message: str,
 ):
-    safe_message = escape_html(
-        message
-    )
-
-    return LOGIN_HTML.replace(
-        "</form>",
-        (
-            f"""
-            <div class="error">
-                {safe_message}
-            </div>
-            </form>
-            """
-        ),
-    )
+    safe_message = escape_html(message)
+    html = load_template("login")
+    # Show login box with error via simple notice at top of card
+    notice = f'<div class="err show">{safe_message}</div>'
+    html = html.replace('<div id="loginBox" class="hidden">', f'<div id="loginBox">{notice}')
+    html = html.replace('<div id="setupBox" class="hidden">', '<div id="setupBox" class="hidden">')
+    return html
 
 
 
@@ -2125,7 +2121,7 @@ async def login_page(
         )
 
     return HTMLResponse(
-        LOGIN_HTML
+        load_template("login")
     )
 
 
@@ -4284,7 +4280,7 @@ async def public_sub_page(
         )
 
     return HTMLResponse(
-        PUBLIC_SUB_HTML
+        load_template("sub")
     )
 
 
@@ -5631,7 +5627,7 @@ async def dashboard(
     await ensure_default_link()
 
     return HTMLResponse(
-        DASHBOARD_HTML
+        load_template("dashboard")
     )
 
 

@@ -1,55 +1,30 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
 <meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1"
->
-
-<title>
-PX Panel
-</title>
-
-<link rel="stylesheet" href="/static/sub/css/style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PXPanel Subscription · {{APP_VERSION}}</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/page-assets/sub/style.css">
+<style>
+body{min-height:100vh;margin:0;display:flex;align-items:center;justify-content:center;padding:24px;
+font-family:Vazirmatn,Tahoma,sans-serif;background:#0a0a0f;color:#f1f5f9}
+.card{max-width:420px;width:100%;padding:28px;border-radius:18px;background:#12121a;border:1px solid rgba(255,255,255,.08)}
+h1{font-size:1.2rem;margin:0 0 6px;font-weight:800}
+.version{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:16px}
+.text{font-size:13px;line-height:1.8;color:rgba(255,255,255,.65);margin-bottom:12px}
+.url{font-size:12px;word-break:break-all;direction:ltr;text-align:left;background:rgba(0,0,0,.35);padding:12px;border-radius:10px;margin-bottom:16px}
+.support{color:#60a5fa;font-size:12px;text-decoration:none}
+</style>
 </head>
-
 <body>
-
 <div class="card">
-
-<h1>
-PX Panel
-</h1>
-
-<div class="version">
-13.8.0
+  <h1>PXPanel</h1>
+  <div class="version">Subscription · v{{APP_VERSION}}</div>
+  <div class="text">اشتراک شما آماده است. لینک زیر را در کلاینت وارد کنید.</div>
+  <div class="url" id="subUrl"></div>
+  <a class="support" href="https://t.me/logic_sec" target="_blank" rel="noopener">پشتیبانی @logic_sec</a>
 </div>
-
-<div class="text">
-اشتراک شما آماده است.
-</div>
-
-<div
-class="url"
-id="subUrl"
-></div>
-
-<a
-class="support"
-href="https://t.me/Pixonal"
-target="_blank"
-rel="noopener"
->
-پشتیبانی @Pixonal
-</a>
-
-</div>
-
-<script src="/static/sub/js/app.js"></script>
-
+<script src="/page-assets/sub/app.js"></script>
 </body>
 </html>
